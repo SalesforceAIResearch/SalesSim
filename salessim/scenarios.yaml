@@ -1,0 +1,41 @@
+scenarios:
+  - persona: new_grad
+    big_5_specification:
+      extroversion: Low
+      neuroticism: Low
+      conscientiousness: High
+      agreeableness: High
+      openness: High
+    num_rollouts_per_unique_scenario: 2
+  - persona: busy_parent
+    big_5_specification:
+      extroversion: Low, High
+      neuroticism: Low, High
+      conscientiousness: High, Low
+      agreeableness: High, Low
+      openness: High, Low
+    num_rollouts_per_unique_scenario: 2
+  - persona: budget_shopper
+    big_5_specification:
+      extroversion: Low, High
+      neuroticism: Low, High
+      conscientiousness: Low, High
+      agreeableness: Low, High
+      openness: Low, High
+    num_rollouts_per_unique_scenario: 2
+  - persona: senior_citizen
+    big_5_specification:
+      extroversion: Low, High
+      neuroticism: Low, High
+      conscientiousness: Low, High
+      agreeableness: Low, High
+      openness: Low, High
+    num_rollouts_per_unique_scenario: 2
+  - persona: young_professional
+    big_5_specification:
+      extroversion: Low, High
+      neuroticism: Low, High
+      conscientiousness: Low, High
+      agreeableness: Low, High
+      openness: Low, High
+    num_rollouts_per_unique_scenario: 2
