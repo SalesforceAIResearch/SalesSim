@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "salessim"
+version = "0.1.0"
+description = "SalesSim is an environment for simulating interactions between AI customers and e-commerce sales agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "SalesSim Team"}
+]
+keywords = ["ai", "sales", "simulation", "evaluation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "litellm>=1.80.0",
+    "sentence-transformers==3.0.1",
+    "langchain==0.0.325",
+    "nltk==3.9.2",
+    "pydantic==2.10.6",
+    "faiss-cpu==1.13.0",
+    "google-cloud-aiplatform==1.38"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "black",
+    "flake8",
+    "mypy",
+]
+
+[project.scripts]
+usersimeval = "usersimeval.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/salessim"
+Repository = "https://github.com/your-org/salessim"
+Issues = "https://github.com/your-org/salessim/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agents*", "usersimeval*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml", "*.json"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]

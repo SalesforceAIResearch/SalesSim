@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>usersimeval Rollout Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .dimension-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            min-width: 200px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .stats {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .rollout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .rollout-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .rollout-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .rollout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .rollout-index {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .score-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .score-neutral { background: #f39c12; color: white; }
+        .score-high { background: #27ae60; color: white; }
+        .score-low { background: #e74c3c; color: white; }
+        .score-1 { background: #27ae60; color: white; }
+        .score-0 { background: #e74c3c; color: white; }
+
+        .dimensions-list {
+            margin-top: 10px;
+        }
+
+        .dimension-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .dimension-name {
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .conversation-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+        }
+
+        .conversation-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+        }
+
+        .conversation-text {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .dimension-scores-section,
+        .reasoning-section {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .dimension-scores-section h3,
+        .reasoning-section h3,
+        .conversation-text-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+
+        .dimension-scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .dimension-score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .dimension-score-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .reasoning-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .reasoning-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reasoning-text {
+            line-height: 1.6;
+            color: #444;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        .no-reasoning {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .conversation-text-section {
+            margin-top: 20px;
+        }
+
+        .section-toggle {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+
+        .section-toggle:hover {
+            color: #2980b9;
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.expanded {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>usersimeval Rollout Viewer</h1>
+
+        <div class="controls">
+            <div class="dimension-selector">
+                <label for="dimensionSelect">Filter by Dimension:</label>
+                <select id="dimensionSelect">
+                    <option value="all">All Dimensions</option>
+                </select>
+            </div>
+
+            <div class="dimension-selector">
+                <label for="scoreFilter">Filter by Score:</label>
+                <select id="scoreFilter">
+                    <option value="all">All Scores</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            Loading statistics...
+        </div>
+
+        <div class="rollout-grid" id="rolloutGrid">
+            <div class="loading">Loading rollouts...</div>
+        </div>
+    </div>
+
+    <div class="conversation-viewer" id="conversationViewer">
+        <div class="conversation-content">
+            <button class="close-btn" onclick="closeConversation()">&times;</button>
+            <h2 id="conversationTitle">Conversation</h2>
+
+            <div class="dimension-scores-section" id="dimensionScoresSection">
+                <h3>Dimension Scores</h3>
+                <div class="dimension-scores-grid" id="dimensionScoresGrid">
+                    Loading dimension scores...
+                </div>
+            </div>
+
+            <div class="reasoning-section" id="reasoningSection">
+                <h3>Reasoning Traces (Sample 1)</h3>
+                <div class="reasoning-content" id="reasoningContent">
+                    Loading reasoning traces...
+                </div>
+            </div>
+
+            <div class="conversation-text-section">
+                <h3>Conversation</h3>
+                <div class="conversation-text" id="conversationText">
+                    Loading conversation...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rolloutData = [];
+        let filteredData = [];
+        let allDimensions = new Set();
+        let allScores = new Set();
+        // Load the breakdown scores data
+        async function loadData() {
+            try {
+                let response = await fetch('./breakdown_scores.json');
+                if (!response.ok) throw new Error('Not found');
+
+                rolloutData = await response.json();
+
+                // Extract all dimensions and scores
+                rolloutData.forEach(rollout => {
+                    Object.keys(rollout.dimension_scores).forEach(dim => {
+                        allDimensions.add(dim);
+                    });
+                    Object.values(rollout.dimension_scores).forEach(score => {
+                        allScores.add(score);
+                    });
+                });
+
+                populateDimensionSelector();
+                populateScoreFilter();
+                filteredData = [...rolloutData];
+                updateStats();
+                renderRollouts();
+            } catch (error) {
+                document.getElementById('rolloutGrid').innerHTML =
+                    '<div class="error">Error loading data: ' + error.message + '</div>';
+            }
+        }
+
+        function populateDimensionSelector() {
+            const select = document.getElementById('dimensionSelect');
+            const sortedDimensions = Array.from(allDimensions).sort();
+
+            sortedDimensions.forEach(dim => {
+                const option = document.createElement('option');
+                option.value = dim;
+                option.textContent = dim.replace(/_/g, ' ');
+                select.appendChild(option);
+            });
+        }
+
+        function populateScoreFilter() {
+            const select = document.getElementById('scoreFilter');
+            const sortedScores = Array.from(allScores).sort();
+
+            sortedScores.forEach(score => {
+                const option = document.createElement('option');
+                option.value = score;
+                option.textContent = score;
+                select.appendChild(option);
+            });
+        }
+
+        function filterData() {
+            const selectedDimension = document.getElementById('dimensionSelect').value;
+            const selectedScore = document.getElementById('scoreFilter').value;
+
+            filteredData = rolloutData.filter(rollout => {
+                let dimensionMatch = selectedDimension === 'all' ||
+                    rollout.dimension_scores.hasOwnProperty(selectedDimension);
+
+                let scoreMatch = selectedScore === 'all' ||
+                    Object.values(rollout.dimension_scores).includes(selectedScore) ||
+                    (selectedDimension !== 'all' && rollout.dimension_scores[selectedDimension] == selectedScore);
+
+                return dimensionMatch && scoreMatch;
+            });
+
+            updateStats();
+            renderRollouts();
+        }
+
+        function updateStats() {
+            const total = filteredData.length;
+            const statsDiv = document.getElementById('stats');
+
+            let statsHtml = `<strong>Showing ${total} rollouts</strong>`;
+
+            if (total > 0) {
+                // Count scores by dimension
+                const selectedDimension = document.getElementById('dimensionSelect').value;
+                if (selectedDimension !== 'all') {
+                    const scoreCounts = {};
+                    filteredData.forEach(rollout => {
+                        const score = rollout.dimension_scores[selectedDimension];
+                        if (score !== undefined) {
+                            scoreCounts[score] = (scoreCounts[score] || 0) + 1;
+                        }
+                    });
+
+                    const scoreStats = Object.entries(scoreCounts)
+                        .map(([score, count]) => `${score}: ${count}`)
+                        .join(', ');
+
+                    statsHtml += ` | ${selectedDimension.replace(/_/g, ' ')}: ${scoreStats}`;
+                }
+            }
+
+            statsDiv.innerHTML = statsHtml;
+        }
+
+        function getScoreClass(score) {
+            if (typeof score === 'string') {
+                return 'score-' + score.toLowerCase();
+            } else if (typeof score === 'number') {
+                return 'score-' + score;
+            }
+            return '';
+        }
+
+        function renderRollouts() {
+            const grid = document.getElementById('rolloutGrid');
+
+            if (filteredData.length === 0) {
+                grid.innerHTML = '<div class="loading">No rollouts match the selected filters.</div>';
+                return;
+            }
+
+            const html = filteredData.map(rollout => {
+                const dimensionsHtml = Object.entries(rollout.dimension_scores)
+                    .map(([dim, score]) => `
+                        <div class="dimension-item">
+                            <span class="dimension-name">${dim.replace(/_/g, ' ')}</span>
+                            <span class="score-badge ${getScoreClass(score)}">${score}</span>
+                        </div>
+                    `).join('');
+
+                const conversationId = rollout.conversation_id || rollout.index;
+                const displayId = rollout.conversation_id ? rollout.conversation_id.substring(0, 8) : rollout.index;
+                const displayTitle = rollout.conversation_id ? `Conversation ${displayId}` : `Rollout #${rollout.index}`;
+
+                return `
+                    <div class="rollout-card" onclick="openConversation('${conversationId}')">
+                        <div class="rollout-header">
+                            <div class="rollout-index">${displayTitle}</div>
+                        </div>
+                        <div class="dimensions-list">
+                            ${dimensionsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            grid.innerHTML = html;
+        }
+
+        async function openConversation(conversationIdOrIndex) {
+            const viewer = document.getElementById('conversationViewer');
+            const title = document.getElementById('conversationTitle');
+            const content = document.getElementById('conversationText');
+            const dimensionScoresGrid = document.getElementById('dimensionScoresGrid');
+            const reasoningContent = document.getElementById('reasoningContent');
+
+            content.textContent = 'Loading conversation...';
+            dimensionScoresGrid.textContent = 'Loading dimension scores...';
+            reasoningContent.textContent = 'Loading reasoning traces...';
+            viewer.style.display = 'block';
+
+            try {
+                // Find the rollout data by conversation_id or index
+                const rollout = rolloutData.find(r =>
+                    r.conversation_id === conversationIdOrIndex || r.index === conversationIdOrIndex
+                );
+                if (!rollout) {
+                    throw new Error('Rollout not found');
+                }
+
+                const displayId = rollout.conversation_id ? rollout.conversation_id.substring(0, 8) : conversationIdOrIndex;
+                title.textContent = rollout.conversation_id ? `Conversation ${displayId}` : `Conversation #${conversationIdOrIndex}`;
+
+                // Display dimension scores
+                displayDimensionScores(rollout, dimensionScoresGrid);
+
+                // Display reasoning traces (sample 1 from the feedback)
+                displayReasoningTraces(rollout, reasoningContent);
+
+                // Load conversation file
+                let filename = null;
+                let response = null;
+
+                // Human readable conversation format; conversation_{conversation_id}.txt
+                
+                filename = `./human_readable_conversations/conversation_${rollout.conversation_id}.txt`;
+                response = await fetch(filename);
+
+                if (response.ok) {
+                    const conversationText = await response.text();
+                    content.textContent = conversationText;
+                } else {
+                    content.textContent = `Conversation file not found: ${filename}`;
+                }
+
+            } catch (error) {
+                content.textContent = 'Error loading conversation: ' + error.message;
+                dimensionScoresGrid.textContent = 'Error loading dimension scores: ' + error.message;
+                reasoningContent.textContent = 'Error loading reasoning traces: ' + error.message;
+            }
+        }
+
+        function displayDimensionScores(rollout, container) {
+            const scoresHtml = Object.entries(rollout.dimension_scores)
+                .map(([dimension, score]) => `
+                    <div class="dimension-score-item">
+                        <span class="dimension-name">${dimension.replace(/_/g, ' ')}</span>
+                        <span class="score-badge ${getScoreClass(score)}">${score}</span>
+                    </div>
+                `).join('');
+
+            container.innerHTML = scoresHtml;
+        }
+
+        function displayReasoningTraces(rollout, container) {
+            if (!rollout.judgment_verbose) {
+                container.innerHTML = '<div class="no-reasoning">No reasoning traces available</div>';
+                return;
+            }
+
+            const reasoningHtml = Object.entries(rollout.judgment_verbose)
+                .map(([dimension, traces]) => {
+                    const score = rollout.dimension_scores[dimension];
+                    const firstTrace = traces[0] || 'No reasoning available';
+                    const dimensionId = dimension.replace(/[^a-zA-Z0-9]/g, '_');
+
+                    // Clean up the trace text by removing XML tags
+                    const cleanTrace = firstTrace
+                        .replace(/<rate>.*?<\/rate>/g, '')
+                        .replace(/<analysis>.*?<\/analysis>/g, '')
+                        .replace(/<score>.*?<\/score>/g, '')
+                        .replace(/<justification>(.*?)<\/justification>/gs, '$1')
+                        .trim();
+
+                    return `
+                        <div class="reasoning-item">
+                            <div class="reasoning-header">
+                                <span class="dimension-name">${dimension.replace(/_/g, ' ')}</span>
+                                <span class="score-badge ${getScoreClass(score)}">${score}</span>
+                                <button class="section-toggle" onclick="toggleDimensionReasoning('${dimensionId}')" id="reasoningToggle_${dimensionId}">▶ Show</button>
+                            </div>
+                            <div class="reasoning-text section-content" id="reasoningContent_${dimensionId}">${cleanTrace}</div>
+                        </div>
+                    `;
+                }).join('');
+
+            container.innerHTML = reasoningHtml;
+        }
+
+        function closeConversation() {
+            document.getElementById('conversationViewer').style.display = 'none';
+        }
+
+        function toggleDimensionReasoning(dimensionId) {
+            const content = document.getElementById(`reasoningContent_${dimensionId}`);
+            const toggle = document.getElementById(`reasoningToggle_${dimensionId}`);
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.textContent = '▶ Show';
+            } else {
+                content.classList.add('expanded');
+                toggle.textContent = '▼ Hide';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('dimensionSelect').addEventListener('change', filterData);
+        document.getElementById('scoreFilter').addEventListener('change', filterData);
+
+        // Close conversation viewer when clicking outside
+        document.getElementById('conversationViewer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConversation();
+            }
+        });
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>

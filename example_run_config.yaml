@@ -1,0 +1,54 @@
+# Copy this file and modify it for your specific setup.
+
+# AI Customer Model Configuration
+# The model that simulates customer behavior in sales conversations
+ai_customer_model:
+  # REQUIRED: Model identifier (examples: "gpt-4", "hosted_vllm/olmo3", "claude-3-sonnet")
+  model_name: gpt-4o
+
+  # API credentials (choose one method):
+  api_key: null                    # Direct API key 
+  custom_api_key_env: null         # Environment variable name containing API key (e.g., "OPENAI_API_KEY")
+
+  # Provider-specific settings:
+  organization: null               # OpenAI organization ID (if applicable)
+  base_url: null                   # For custom endpoint (e.g. for self-hosted models like vLLM)
+  custom_api_key: null             # For header authentication
+  extra_headers: null              # JSON for additional HTTP headers (e.g., '{"X-Custom": "value"}')
+
+  # Model parameters:
+  temperature: 0.9                 
+  max_tokens: 1024                 
+
+# Sales Agent Model Configuration, similar to the above. 
+sales_agent_model:
+  model_name: gpt-4o
+  api_key: null
+  custom_api_key_env: null
+  organization: null
+  base_url: null
+  custom_api_key: null
+  extra_headers: null
+
+  temperature: 0.5                
+  max_tokens: 4096               
+
+# REQUIRED: Path to scenarios file defining customer personas and interactions
+scenarios_path: salessim/scenarios.yaml
+
+# REQUIRED: Maximum conversation turns (customer + agent responses)
+max_turns: 9
+
+# Configuration Examples:
+#
+# OpenAI GPT-4:
+# ai_customer_model:
+#   model_name: "gpt-4"
+#   custom_api_key_env: "OPENAI_API_KEY"
+#
+# Self-hosted vLLM:
+# sales_agent_model:
+#   model_name: "hosted_vllm/mistral-8b"
+#   base_url: "http://localhost:8000/v1"
+#   temperature: 0.3
+#   max_tokens: 3000
