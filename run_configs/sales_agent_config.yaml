@@ -1,0 +1,15 @@
+# Sales Agent Model Configuration
+# Separate config file for the sales agent model
+
+sales_agent_model:
+  model_name: gpt-5.2
+  api_key: null
+  custom_api_key_env: OPENAI_API_KEY
+  base_url: null
+  custom_api_key: null
+  extra_headers: null
+
+  temperature: 0.5
+  max_tokens: 10000
+  reasoning_effort: medium  # OpenAI gpt-5 reasoning: none, low, medium, high, xhigh
+  with_thinking: false

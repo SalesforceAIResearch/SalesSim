@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import asyncio
+import random
+
 import aiohttp
 import logging
 from typing import List
@@ -9,7 +12,7 @@ logger = logging.getLogger(__name__)
 class LookupServiceClient:
     """HTTP client for the consolidated Lookup Service"""
 
-    def __init__(self, base_url: str = "http://127.0.0.1:8001"):
+    def __init__(self, base_url: str = "http://127.0.0.1:8003"):
         self.base_url = base_url
         self.session = None
         self._connector = aiohttp.TCPConnector(
@@ -34,34 +37,53 @@ class LookupServiceClient:
         if self._connector and not self._connector.closed:
             await self._connector.close()
 
-    async def search_products(self, query: str, k: int = 4):
-        """Search for products via HTTP API"""
+    async def search_products(self, query: str, k: int = 4, product_category: str = None,
+                              max_retries: int = 3, base_delay: float = 0.5, max_delay: float = 8.0):
+        """Search for products via HTTP API with exponential backoff."""
         session = await self._get_session()
+        last_exception = None
 
-        try:
-            async with session.post(
-                f"{self.base_url}/products/search",
-                json={"query": query, "k": k}
-            ) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    return [Document(item["page_content"], item["metadata"]) for item in data]
-                else:
+        for attempt in range(max_retries + 1):
+            try:
+                async with session.post(
+                    f"{self.base_url}/products/search",
+                    json={"query": query, "k": k, "product_category": product_category},
+                ) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        return [Document(item["page_content"], item["metadata"]) for item in data]
+
                     error_text = await response.text()
-                    logger.error(f"Product search error {response.status}: {error_text}")
-                    return []
-        except Exception as e:
-            logger.error(f"Failed to search products: {e}")
-            return []
 
-    async def search_buying_guides(self, query: str, k: int = 4):
+                    if 400 <= response.status < 500 and response.status != 429:
+                        raise RuntimeError(
+                            f"Product search failed with non-retryable status {response.status}: {error_text}")
+
+                    logger.warning(f"Product search retryable error {response.status} "
+                                   f"(attempt {attempt+1}/{max_retries+1}): {error_text}")
+                    last_exception = RuntimeError(
+                        f"Product search failed with status {response.status}: {error_text}")
+
+            except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+                logger.warning(f"Product search request failed "
+                               f"(attempt {attempt+1}/{max_retries+1}): {e}")
+                last_exception = e
+
+            if attempt < max_retries:
+                delay = min(base_delay * (2 ** attempt) + random.uniform(0, 0.5), max_delay)
+                await asyncio.sleep(delay)
+
+        raise RuntimeError(
+            f"Product search failed after {max_retries+1} attempts") from last_exception
+
+    async def search_buying_guides(self, query: str, k: int = 4, product_category: str = None):
         """Search for buying guides via HTTP API"""
         session = await self._get_session()
 
         try:
             async with session.post(
                 f"{self.base_url}/guides/search",
-                json={"query": query, "k": k},
+                json={"query": query, "k": k, "product_category": product_category},
                 timeout=aiohttp.ClientTimeout(total=10)
             ) as response:
                 if response.status == 200:
@@ -76,63 +98,25 @@ class LookupServiceClient:
             logger.error(f"Failed to search buying guides: {e}")
             return []
 
-    async def find_recommended_items_in_response(self, candidates: List, response: str, sim_threshold: float = 0.70):
-        """Find recommended items in response via HTTP API"""
-        session = await self._get_session()
-
-        # Convert candidates to serializable format
-        candidates_data = []
-        for candidate in candidates:
-            candidates_data.append({
-                "page_content": candidate.page_content,
-                "metadata": candidate.metadata
-            })
-
-        try:
-            async with session.post(
-                f"{self.base_url}/sales/find_recommended_items",
-                json={
-                    "candidates": candidates_data,
-                    "response": response,
-                    "sim_threshold": sim_threshold
-                },
-                timeout=aiohttp.ClientTimeout(total=10)
-            ) as response_obj:
-                if response_obj.status == 200:
-                    data = await response_obj.json()
-                    # Convert back to Document-like objects for compatibility
-                    return [Document(item["page_content"], item["metadata"]) for item in data]
-                else:
-                    error_text = await response_obj.text()
-                    logger.error(f"Find recommended items error {response_obj.status}: {error_text}")
-                    return []
-        except Exception as e:
-            breakpoint()
-            logger.error(f"Failed to find recommended items: {e}")
-            return []
-
 # Legacy classes for backward compatibility
 class ProductLookupClient:
     """Legacy wrapper for product lookups"""
-    def __init__(self, base_url: str = "http://127.0.0.1:8001"):
+    def __init__(self, base_url: str = "http://127.0.0.1:8003"):
         self.client = LookupServiceClient(base_url)
 
-    async def top_docs(self, query: str, k: int = 4):
-        return await self.client.search_products(query, k)
-
-    async def find_recommended_items_in_response(self, candidates: List, response: str, sim_threshold: float = 0.70):
-        return await self.client.find_recommended_items_in_response(candidates, response, sim_threshold)
+    async def top_docs(self, query: str, k: int = 4, product_category: str = None):
+        return await self.client.search_products(query, k, product_category)
 
     async def close(self):
         await self.client.close()
 
 class BuyingGuideClient:
     """Legacy wrapper for buying guide lookups"""
-    def __init__(self, base_url: str = "http://127.0.0.1:8001"):
+    def __init__(self, base_url: str = "http://127.0.0.1:8003"):
         self.client = LookupServiceClient(base_url)
 
-    async def top_docs(self, query: str, k: int = 4):
-        return await self.client.search_buying_guides(query, k)
+    async def top_docs(self, query: str, k: int = 4, product_category: str = None):
+        return await self.client.search_buying_guides(query, k, product_category)
 
     async def close(self):
         await self.client.close()

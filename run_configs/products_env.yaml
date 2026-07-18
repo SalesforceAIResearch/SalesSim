@@ -1,0 +1,40 @@
+# Shared Product Environment Configuration
+# This file contains all product-related settings shared across evaluations
+
+# Global lookup service settings
+guides_index_dir: guides_faiss_index/guides_faiss_index_all
+products_index_dir: products_faiss_index
+enable_product_images: true
+prune_previous_image_urls: true
+lookup_cuda_visible_devices: "4"  # set to "" for CPU, or "0", "1", etc. for specific GPU
+lookup_base_url: http://127.0.0.1:8003
+
+# Per-product category configuration
+# Each category specifies its data file, image directory, and optional persona file
+# Use versioned filenames (e.g. _v1.0, _v1.1) to track data changes.
+# Changing data_file versions will trigger a FAISS index rebuild on next service start.
+product_categories:
+  laptops:
+    data_file: data/products/laptops_v1.0.json
+    image_dir: data/images/laptops
+    persona_file: salessim/agents/ai_customer/personas/laptops_personas_v1.0.jsonl
+
+  female_clothing:
+    data_file: data/products/female_clothing_v1.0.json
+    image_dir: data/images/female_clothing
+    persona_file: salessim/agents/ai_customer/personas/female_clothing_personas_v1.1.jsonl
+
+  male_clothing:
+    data_file: data/products/male_clothing_v1.0.json
+    image_dir: data/images/male_clothing
+    persona_file: salessim/agents/ai_customer/personas/male_clothing_personas_v1.1.jsonl
+
+  smart_watch:
+    data_file: data/products/smart_watch_v1.0.json
+    image_dir: data/images/smart_watch
+    persona_file: salessim/agents/ai_customer/personas/smart_watch_personas_v1.2.jsonl
+
+  game_gadgets:
+    data_file: data/products/game_gadgets_v1.0.json
+    image_dir: data/images/game_gadgets
+    persona_file: salessim/agents/ai_customer/personas/game_gadgets_personas_v1.0.jsonl

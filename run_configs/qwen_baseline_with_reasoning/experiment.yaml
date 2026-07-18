@@ -1,0 +1,33 @@
+# Copy this file and modify it for your specific setup.
+
+# AI Customer Model Configuration
+# The model that simulates customer behavior in sales conversations
+ai_customer_model:
+  # REQUIRED: Model identifier (examples: "gpt-4", "hosted_vllm/olmo3", "claude-3-sonnet")
+  model_name: hosted_vllm/qwen_baseline_with_reasoning
+
+  # API credentials (choose one method):
+  api_key: null                    # Direct API key 
+  custom_api_key_env: null       # Environment variable name containing API key (e.g., "OPENAI_API_KEY")
+
+  # Provider-specific settings:
+  organization: null               # OpenAI organization ID (if applicable)
+  base_url: http://127.0.0.1:8040/v1 # /chat/completions 
+  custom_api_key: null             # For header authentication
+  extra_headers: null              # JSON for additional HTTP headers (e.g., '{"X-Custom": "value"}')
+
+  # Model parameters:
+  temperature: 0.7
+  max_tokens: 4096
+  thinking_budget: 0
+  with_thinking: false
+  repetition_penalty: 1.1
+
+
+products:
+  - game_gadgets
+  - smart_watch
+  - female_clothing
+  - male_clothing
+
+max_turns: 16
