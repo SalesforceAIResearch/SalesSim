@@ -23,7 +23,7 @@ class ServiceManager:
         self.service_files: Dict[str, tuple] = {}  # Store file handles for cleanup
         self.service_configs = {
             "lookup_service": {
-                "script": "salessim/services/sales_service.py",
+                "script": "customersim/services/sales_service.py",
                 "port": os.environ.get("LOOKUP_BASE_PORT","8001"), 
                 "health_endpoint": f"http://127.0.0.1:{os.environ.get('LOOKUP_BASE_PORT', '8001')}/health"
             }

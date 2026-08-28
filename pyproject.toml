@@ -3,14 +3,14 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "salessim"
+name = "customersim"
 version = "0.1.0"
-description = "SalesSim is an environment for simulating interactions between AI customers and e-commerce sales agents."
+description = "CustomerSim is an environment for simulating interactions between AI customers and e-commerce sales agents."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "SalesSim Team"}
+    {name = "CustomerSim Team"}
 ]
 keywords = ["ai", "sales", "simulation", "evaluation"]
 classifiers = [
@@ -78,13 +78,13 @@ dev = [
 
 
 [project.urls]
-Homepage = "https://github.com/your-org/salessim"
-Repository = "https://github.com/your-org/salessim"
-Issues = "https://github.com/your-org/salessim/issues"
+Homepage = "https://github.com/your-org/customersim"
+Repository = "https://github.com/your-org/customersim"
+Issues = "https://github.com/your-org/customersim/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["salessim*", "common*"]
+include = ["customersim*", "common*"]
 exclude = ["tests*", "scripts*", "venv*", "verl*", "wandb*"]
 
 [tool.setuptools.package-data]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze SalesSim dialogues and compute various metrics."""
+"""Analyze CustomerSim dialogues and compute various metrics."""
 
 import argparse
 import asyncio
@@ -295,7 +295,7 @@ def generate_analysis_report(features: dict) -> str:
 
     report = []
     report.append("=" * 60)
-    report.append("SalesSim Dialogue Feature Analysis")
+    report.append("CustomerSim Dialogue Feature Analysis")
     report.append("(qwen_baseline_reasoning)")
     report.append("=" * 60)
     report.append("")
@@ -380,7 +380,7 @@ async def main(dialogue_dir: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Analyze SalesSim dialogues and compute various metrics")
+    parser = argparse.ArgumentParser(description="Analyze CustomerSim dialogues and compute various metrics")
     parser.add_argument(
         "dialogue_dir",
         help="top-level folder for evaluation runs for all products, feature vectors will be calculated for all product categories"

@@ -15,7 +15,7 @@ import uvicorn
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from salessim.services.constants import Document
+from customersim.services.constants import Document
 
 # Compatibility shim for loading old FAISS indices
 import langchain_community.docstore

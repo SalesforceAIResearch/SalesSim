@@ -32,11 +32,11 @@ def load_personas(product, persona_file_override=None):
     
     # Default paths based on product category
     if product == 'laptops':
-        preferences_file = f"salessim/agents/ai_customer/personas/laptop_personas.jsonl"
+        preferences_file = f"customersim/agents/ai_customer/personas/laptop_personas.jsonl"
         return _load_persona_file(preferences_file)
     else:
-        json_preferences_file = f"salessim/agents/ai_customer/personas/{product}_personas.json"
-        jsonl_preferences_file = f"salessim/agents/ai_customer/personas/{product}_personas.jsonl"
+        json_preferences_file = f"customersim/agents/ai_customer/personas/{product}_personas.json"
+        jsonl_preferences_file = f"customersim/agents/ai_customer/personas/{product}_personas.jsonl"
         
         if os.path.exists(json_preferences_file):
             return _load_persona_file(json_preferences_file)

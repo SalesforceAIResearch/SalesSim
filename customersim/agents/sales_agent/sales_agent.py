@@ -11,11 +11,11 @@ import os
 import hashlib
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.ai_client import AIClient
-from salessim.agents.sales_agent.prompts import (
+from customersim.agents.sales_agent.prompts import (
     get_system_instruction,
 )
-from salessim.services.http_clients import ProductLookupClient, BuyingGuideClient
-from salessim.agents.utils import find_recommended_items
+from customersim.services.http_clients import ProductLookupClient, BuyingGuideClient
+from customersim.agents.utils import find_recommended_items
 from common.bcolors import bcolors
 from common.ai_client import VLLMResponseWrapper
 import base64

@@ -1,4 +1,4 @@
-# Contributing Guide For SalesSim
+# Contributing Guide For CustomerSim
 
 This page lists the operational governance model of this project, as well as the recommendations and requirements for how to best contribute to {PROJECT}. We strive to obey these as best as possible. As always, thanks for contributing – we hope these guidelines make it easier and shed some light on our approach and processes.
 

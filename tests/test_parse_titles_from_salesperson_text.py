@@ -1,6 +1,6 @@
 import unittest
 
-from salessim.agents.utils import parse_titles_from_salesperson_text
+from customersim.agents.utils import parse_titles_from_salesperson_text
 
 
 class TestParseTitlesFromSalespersonText(unittest.TestCase):

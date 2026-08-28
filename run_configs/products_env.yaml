@@ -17,24 +17,24 @@ product_categories:
   laptops:
     data_file: data/products/laptops_v1.0.json
     image_dir: data/images/laptops
-    persona_file: salessim/agents/ai_customer/personas/laptops_personas_v1.0.jsonl
+    persona_file: customersim/agents/ai_customer/personas/laptops_personas_v1.0.jsonl
 
   female_clothing:
     data_file: data/products/female_clothing_v1.0.json
     image_dir: data/images/female_clothing
-    persona_file: salessim/agents/ai_customer/personas/female_clothing_personas_v1.1.jsonl
+    persona_file: customersim/agents/ai_customer/personas/female_clothing_personas_v1.1.jsonl
 
   male_clothing:
     data_file: data/products/male_clothing_v1.0.json
     image_dir: data/images/male_clothing
-    persona_file: salessim/agents/ai_customer/personas/male_clothing_personas_v1.1.jsonl
+    persona_file: customersim/agents/ai_customer/personas/male_clothing_personas_v1.1.jsonl
 
   smart_watch:
     data_file: data/products/smart_watch_v1.0.json
     image_dir: data/images/smart_watch
-    persona_file: salessim/agents/ai_customer/personas/smart_watch_personas_v1.2.jsonl
+    persona_file: customersim/agents/ai_customer/personas/smart_watch_personas_v1.2.jsonl
 
   game_gadgets:
     data_file: data/products/game_gadgets_v1.0.json
     image_dir: data/images/game_gadgets
-    persona_file: salessim/agents/ai_customer/personas/game_gadgets_personas_v1.0.jsonl
+    persona_file: customersim/agents/ai_customer/personas/game_gadgets_personas_v1.0.jsonl

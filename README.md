@@ -1,8 +1,8 @@
-# SalesSim: Multimodal LLMs as Retail User Simulators
+# CustomerSim: Multimodal LLMs as Retail User Simulators
 
-SalesSim is an environment for retail simulations ([paper](https://huggingface.co/Salesforce/RetailSim-GRPO-4B)) to support benchmarking and development of customer simulators. 
+CustomerSim is an environment for retail simulations ([paper](https://huggingface.co/Salesforce/RetailSim-GRPO-4B)) to support benchmarking and development of customer simulators. 
 
-![](visual_salessim.png)
+![](visual_customersim.png)
 
 ## Benchmark Numbers
 
@@ -24,8 +24,8 @@ We also introduce a RL recipe for improving fidelity named UserGRPO, with model 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/salessim.git
-cd salessim
+git clone https://github.com/your-org/customersim.git
+cd customersim
 
 # Install dependencies
 pip install -e .
@@ -44,13 +44,13 @@ This will start a vLLM server on `http://127.0.0.1:8040` with the Gemma-3-4B-IT 
 2. Start the sales agent service:
 
 ```bash
-python -m salessim.agents.service --config run_configs/sales_agent_config.yaml
+python -m customersim.agents.service --config run_configs/sales_agent_config.yaml
 ```
 
 3. Run the simulation:
 
 ```bash
-python -m salessim.simulate \
+python -m customersim.simulate \
   --config run_configs/gemma_with_reasoning/experiment.yaml \
   --save output_dir/
 ```

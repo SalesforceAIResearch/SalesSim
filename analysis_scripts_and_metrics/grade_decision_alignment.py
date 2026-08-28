@@ -19,8 +19,8 @@ import re
 import sys
 from pathlib import Path
 
-from salessim.simulation_utils import create_persona_hash
-from salessim.agents.utils import (
+from customersim.simulation_utils import create_persona_hash
+from customersim.agents.utils import (
     fuzzy_match_product,
     normalize_product_name,
     subset_match_product,

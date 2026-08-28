@@ -7,10 +7,10 @@ import logging
 import os
 import json
 from datetime import datetime
-from salessim.simulation_utils import (
+from customersim.simulation_utils import (
     run_batch_simulations
 )
-from salessim.services.service_manager import ServiceManager
+from customersim.services.service_manager import ServiceManager
 
 
 def setup_error_logging(output_dir):
@@ -30,8 +30,8 @@ def setup_error_logging(output_dir):
     # Add handler to loggers that handle VLLM and sales service errors
     loggers_to_monitor = [
         'common.ai_client',           # VLLM errors
-        'salessim.services.http_clients',  # Sales service HTTP errors
-        'salessim.services.sales_service', # Sales service errors
+        'customersim.services.http_clients',  # Sales service HTTP errors
+        'customersim.services.sales_service', # Sales service errors
     ]
 
     for logger_name in loggers_to_monitor:

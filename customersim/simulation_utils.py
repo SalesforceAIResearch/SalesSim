@@ -12,8 +12,8 @@ from datetime import datetime
 import shutil
 import tqdm
 from typing import Union
-from salessim.agents.sales_agent.sales_agent import SalesAgent
-from salessim.agents.ai_customer.ai_customer import load_personas, CustomerSimulator
+from customersim.agents.sales_agent.sales_agent import SalesAgent
+from customersim.agents.ai_customer.ai_customer import load_personas, CustomerSimulator
 from common.ai_client import create_client_from_model_name
 from common.bcolors import bcolors
 
@@ -401,7 +401,7 @@ async def run_batch_simulations(max_turns, scenarios_config, customer_model_conf
     #     await run_simulation_for_product_category(max_turns, product_category, scenarios_config, customer_model_config, salesbot_model_config, shopperbot_client, salesbot_client, os.path.join(output_dir, f"{product_category}_results.jsonl"))
    
 def default_json_serializer(obj):
-    from salessim.services.constants import Document
+    from customersim.services.constants import Document
 
     if isinstance(obj, type):
         return obj.__name__

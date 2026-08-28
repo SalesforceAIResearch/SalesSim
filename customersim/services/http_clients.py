@@ -6,7 +6,7 @@ import random
 import aiohttp
 import logging
 from typing import List
-from salessim.services.constants import Document
+from customersim.services.constants import Document
 logger = logging.getLogger(__name__)
 
 class LookupServiceClient:
